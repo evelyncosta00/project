@@ -1,0 +1,49 @@
+from dash import Dash, html, dcc
+import plotly.express as px
+import numpy
+import pandas as pd
+
+app = Dash(__name__)
+
+df= pd.read_excel("ASSOC_2023_2022.xlsx")
+
+#fig = px.bar(df, x="NOMECAMPUS", y="PAGOU MATR CALOURO 20231", color= "UF_SIGLA", barmode="group")
+#fig = px.bar(df, x="ANO", y="QUANT_ALUNOS")
+
+fig = px.bar(df, x="UNIDADE", y="QUANT_ALUNOS", color="ANO", barmode="group", labels ={
+     "UNIDADE": "Falculdade Associada",
+     "QUANT_ALUNOS": "Matrículas"
+}
+            ,color_discrete_sequence=px.colors.qualitative.T10
+            ,template='plotly_dark'
+            ,text= "QUANT_ALUNOS"
+             )
+fig.update_traces(textposition='inside',texttemplate='%{text:.2s}')
+fig.update_yaxes(showticklabels=False)
+fig.update_layout(title={
+    'text' : 'Comparativo Matrículas Faculdades Associadas',
+    'y': 0.9,
+    'x': 0.5
+})
+
+#GRÁFICO PIZZA
+#fig = px.pie(df,values="QUANT_ALUNOS", names="UNIDADE")
+#fig.show()
+
+
+
+app.layout = html.Div(children=[
+  html.H1(children='Associadas'),
+   # html.H2(children='Comparativo 2023-2022'),
+    #html.Div(children='''
+     #   Obs: Este gráfico relaciona calouros e veteranos
+    #'''),
+
+    dcc.Graph(
+        id='example-graph',
+        figure=fig
+    )
+])
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
